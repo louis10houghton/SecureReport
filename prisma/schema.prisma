@@ -1,0 +1,126 @@
+// SecureReport AI — database schema
+// Postgres (Neon) via Prisma. See .env.example for connection variables.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Pooled connection (pgbouncer) used by serverless functions at runtime.
+  url       = env("DATABASE_URL")
+  // Direct connection used by `prisma migrate` / `prisma db push`.
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Plan {
+  Starter
+  Professional
+  Business
+}
+
+enum SubscriptionStatus {
+  incomplete
+  active
+  past_due
+  canceled
+}
+
+enum TransactionStatus {
+  pending
+  approved
+  failed
+}
+
+enum IncidentSeverity {
+  low
+  medium
+  high
+}
+
+// A customer account.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  company      String?
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  subscription Subscription?
+  transactions Transaction[]
+  incidents    Incident[]
+}
+
+// One active subscription per user (mirrors Stripe subscription state).
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                 Plan
+  status               SubscriptionStatus @default(incomplete)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?            @unique
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+}
+
+// A payment attempt / record (audit trail, survives restarts unlike the old in-memory Map).
+model Transaction {
+  id                    String            @id @default(cuid())
+  userId                String?
+  user                  User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  plan                  Plan
+  amount                Int // whole dollars for this MVP (e.g. 99)
+  currency              String            @default("aud")
+  status                TransactionStatus @default(pending)
+  last4                 String?
+  cardBrand             String?
+  stripeCheckoutId      String?
+  stripePaymentIntentId String?
+  createdAt             DateTime          @default(now())
+
+  @@index([userId])
+}
+
+// Contact-form submissions (previously just an alert() on the client).
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String?
+  email     String
+  company   String?
+  phone     String?
+  plan      String?
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+// Incident report produced by the AI pipeline and reviewed by a human.
+// Included so the schema reflects the actual product domain; not yet wired to the landing page.
+model Incident {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  siteName   String
+  title      String
+  type       String
+  severity   IncidentSeverity @default(low)
+  reviewed   Boolean          @default(false)
+  reportUrl  String?
+  occurredAt DateTime?
+  createdAt  DateTime         @default(now())
+
+  @@index([userId])
+  @@index([severity])
+}
