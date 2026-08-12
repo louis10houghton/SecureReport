@@ -2,7 +2,11 @@
 // (e.g. a fresh clone or CI), it logs instead of throwing so the flow still works.
 import { Resend } from "resend";
 
-const apiKey = process.env.RESEND_API_KEY;
+// Treat a missing key OR the ".env.example" placeholder ("re_...") as "not
+// configured", so a half-filled .env logs the email instead of throwing an
+// "API key is invalid" error from Resend.
+const rawKey = process.env.RESEND_API_KEY;
+const apiKey = rawKey && !rawKey.includes("...") ? rawKey : null;
 const FROM = process.env.EMAIL_FROM || "SecureReport AI <onboarding@resend.dev>";
 const CONTACT_INBOX = process.env.CONTACT_INBOX || process.env.EMAIL_FROM;
 
@@ -10,7 +14,7 @@ const client = apiKey ? new Resend(apiKey) : null;
 
 async function send({ to, subject, html }) {
   if (!client) {
-    console.warn(`[email] RESEND_API_KEY not set — would have sent "${subject}" to ${to}`);
+    console.warn(`[email] RESEND_API_KEY not configured — would have sent "${subject}" to ${to}`);
     return { skipped: true };
   }
   const { data, error } = await client.emails.send({ from: FROM, to, subject, html });
@@ -49,6 +53,20 @@ export function sendContactNotification(submission) {
       <p>Company: ${escapeHtml(submission.company || "n/a")}<br/>
       Phone: ${escapeHtml(submission.phone || "n/a")}</p>
       <p>${escapeHtml(submission.message)}</p>`,
+  });
+}
+
+// Acknowledgement sent TO the person who submitted the contact form (as opposed
+// to sendContactNotification, which alerts the business inbox).
+export function sendContactConfirmation(submission) {
+  return send({
+    to: submission.email,
+    subject: "We've received your enquiry — SecureReport AI",
+    html: `<p>Hi ${escapeHtml(submission.firstName)},</p>
+      <p>Thanks for reaching out to SecureReport AI. We've received your message and
+      a member of our team will be in touch within 24 hours.</p>
+      <p><strong>Your message:</strong><br/>${escapeHtml(submission.message)}</p>
+      <p>— The SecureReport AI team</p>`,
   });
 }
 

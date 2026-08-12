@@ -13,6 +13,7 @@ import contact from "../api/contact.js";
 import createTransaction from "../api/transactions/index.js";
 import getTransaction from "../api/transactions/[id].js";
 import checkout from "../api/checkout.js";
+import checkoutSession from "../api/checkout-session.js";
 import stripeWebhook from "../api/stripe/webhook.js";
 
 const app = express();
@@ -35,6 +36,7 @@ app.post("/api/contact", mount(contact));
 app.post("/api/transactions", mount(createTransaction));
 app.get("/api/transactions/:id", mount(getTransaction));
 app.post("/api/checkout", mount(checkout));
+app.post("/api/checkout-session", mount(checkoutSession));
 app.post("/api/stripe/webhook", mount(stripeWebhook));
 
 app.listen(PORT, () => {

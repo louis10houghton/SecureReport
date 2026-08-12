@@ -3,7 +3,7 @@
 import { createHandler, readJsonBody, sendJson } from "./_lib/http.js";
 import { prisma } from "./_lib/prisma.js";
 import { isValidEmail } from "./_lib/validation.js";
-import { sendContactNotification } from "./_lib/email.js";
+import { sendContactNotification, sendContactConfirmation } from "./_lib/email.js";
 
 export default createHandler("POST", async (req, res) => {
   const body = await readJsonBody(req);
@@ -34,7 +34,11 @@ export default createHandler("POST", async (req, res) => {
     },
   });
 
-  sendContactNotification(submission).catch((err) => console.error("[contact email]", err));
+  // Notify the business inbox, and send the submitter an acknowledgement.
+  sendContactNotification(submission).catch((err) => console.error("[contact notify email]", err));
+  if (submission.email) {
+    sendContactConfirmation(submission).catch((err) => console.error("[contact confirm email]", err));
+  }
 
   return sendJson(res, 201, { ok: true, id: submission.id, message: "Thanks — we'll be in touch within 24 hours." });
 });

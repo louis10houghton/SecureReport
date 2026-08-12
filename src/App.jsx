@@ -12,6 +12,86 @@ const sites = [
   { name: "Store 05 - Central", lat: -37.8136, lng: 144.9631 },
 ];
 
+// Security & compliance commitments. Grounded in the business plan: Privacy Act
+// 1988 handling, encrypted cloud storage, secure authentication, and mandatory
+// human review. Deliberately avoids claiming certifications (SOC 2 / ISO) the
+// business does not yet hold.
+const complianceItems = [
+  {
+    type: "shield",
+    title: "Privacy Act 1988 aligned",
+    blurb:
+      "CCTV footage and personal information are handled in line with Australia's Privacy Act 1988 and its rules for surveillance data.",
+  },
+  {
+    type: "lock",
+    title: "Encrypted cloud storage",
+    blurb:
+      "Footage and generated reports are stored on encrypted cloud infrastructure, both in transit and at rest.",
+  },
+  {
+    type: "key",
+    title: "Secure authentication",
+    blurb:
+      "Every account is protected by secure sign-in with hashed credentials — passwords are never stored in plain text.",
+  },
+  {
+    type: "user-check",
+    title: "Human review, always",
+    blurb:
+      "No report is finalised by AI alone. A person reviews and approves every incident report before it leaves the platform.",
+  },
+  {
+    type: "database",
+    title: "Your data stays yours",
+    blurb:
+      "You own your footage and reports. Export them as branded PDFs at any time, or request deletion when you close your account.",
+  },
+  {
+    type: "au",
+    title: "Australian-registered business",
+    blurb:
+      "Operated as an ABN-registered, ASIC-compliant Australian business, with cyber and professional indemnity cover under review.",
+  },
+];
+
+// Illustrative testimonials for the demo — replace with real customer quotes
+// before launch. Reuses the fictional businesses shown on the coverage map so
+// the demo stays internally consistent.
+const testimonials = [
+  {
+    quote:
+      "What used to take my duty manager 40 minutes of typing is now a two-minute review. The reports are consistent and police accept them without questions.",
+    name: "Priya Nair",
+    role: "Store Manager, MediPlus Pharmacy",
+    initials: "PN",
+  },
+  {
+    quote:
+      "We plugged it into our existing cameras with zero new hardware. The searchable history helped us spot a repeat offender hitting us on the same weekday.",
+    name: "Daniel Osei",
+    role: "Loss Prevention Lead, TechZone Electronics",
+    initials: "DO",
+  },
+  {
+    quote:
+      "As a single-site owner I don't have time for paperwork. Having a human check every report before it's finalised is what sold me — accuracy matters for insurance.",
+    name: "Sarah Whitton",
+    role: "Owner, North Star Convenience",
+    initials: "SW",
+  },
+];
+
+// Placeholder pilot-retailer names for the trust strip — swap for real partner
+// logos once signed.
+const pilotRetailers = [
+  "MediPlus Pharmacy",
+  "TechZone Electronics",
+  "North Star Convenience",
+  "Westgate Grocers",
+  "Harbour City Retail",
+];
+
 const plans = [
   {
     name: "Starter",
@@ -84,6 +164,46 @@ const capabilityBlurbs = {
   export: "Download a branded PDF for police, insurers, or internal records in one click.",
   bell: "Get notified the moment a new report is generated and ready for review.",
 };
+
+function ComplianceIcon({ type }) {
+  const paths = {
+    shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+    lock: (
+      <>
+        <rect x="4" y="11" width="16" height="10" rx="2" />
+        <path d="M8 11V7a4 4 0 018 0v4" />
+      </>
+    ),
+    key: (
+      <>
+        <circle cx="8" cy="8" r="4" />
+        <path d="M11 11l8 8M17 17l2-2M15 15l2-2" />
+      </>
+    ),
+    "user-check": (
+      <>
+        <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M16 11l2 2 4-4" />
+      </>
+    ),
+    database: (
+      <>
+        <ellipse cx="12" cy="5" rx="8" ry="3" />
+        <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" />
+      </>
+    ),
+    au: (
+      <>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" />
+      </>
+    ),
+  };
+  return (
+    <svg viewBox="0 0 24 24">{paths[type] || paths.shield}</svg>
+  );
+}
 
 function FeatureIcon({ type }) {
   const icons = {
@@ -306,6 +426,7 @@ function LandingPage() {
           <ul className="nav-links">
             <li><a href="#platform">Platform</a></li>
             <li><a href="#features">Features</a></li>
+            <li><a href="#security">Security</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
@@ -462,6 +583,60 @@ function LandingPage() {
         </div>
       </section>
 
+      <section className="section section-light" id="security">
+        <div className="container">
+          <div className="section-header">
+            <div className="section-label">Security &amp; Compliance</div>
+            <h2 className="section-title">Built for trust with your security data</h2>
+            <p className="section-desc">CCTV footage is sensitive. SecureReport AI is designed around Australian privacy obligations, encrypted storage, and mandatory human review — so you can share reports with police and insurers with confidence.</p>
+          </div>
+          <div className="compliance-grid">
+            {complianceItems.map((item) => (
+              <div className="compliance-card" key={item.title}>
+                <div className="compliance-icon"><ComplianceIcon type={item.type} /></div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.blurb}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section testimonials-section">
+        <div className="container">
+          <div className="section-header">
+            <div className="section-label">Customer Stories</div>
+            <h2 className="section-title">Retailers spend less time on paperwork</h2>
+            <p className="section-desc">How stores using SecureReport AI describe the difference.</p>
+          </div>
+          <div className="testimonials-grid">
+            {testimonials.map((t) => (
+              <figure className="testimonial-card" key={t.name}>
+                <div className="testimonial-stars" aria-hidden="true">★★★★★</div>
+                <blockquote>“{t.quote}”</blockquote>
+                <figcaption>
+                  <span className="testimonial-avatar">{t.initials}</span>
+                  <span>
+                    <span className="testimonial-name">{t.name}</span>
+                    <span className="testimonial-role">{t.role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <div className="logo-strip">
+            <span className="logo-strip-label">Piloting with retailers like</span>
+            <div className="logo-strip-items">
+              {pilotRetailers.map((name) => (
+                <span className="logo-chip" key={name}>{name}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="section section-light" id="pricing">
         <div className="container">
           <div className="section-header">
@@ -566,7 +741,10 @@ function LandingPage() {
 function TransactionPage() {
   const [params] = useSearchParams();
   const initialPlan = params.get("plan") || "Professional";
-  const [status, setStatus] = useState("idle");
+  const returnStatus = params.get("status"); // "success" | "cancelled" from Stripe redirect
+  const sessionId = params.get("session_id");
+
+  const [status, setStatus] = useState(returnStatus === "success" ? "success" : "idle");
   const [error, setError] = useState("");
   const [receipt, setReceipt] = useState(null);
   const [data, setData] = useState({
@@ -574,39 +752,45 @@ function TransactionPage() {
     fullName: "",
     email: "",
     company: "",
-    cardNumber: "",
-    expiry: "",
-    cvc: "",
   });
 
   const selectedPlan = plans.find((p) => p.name === data.plan) || plans[0];
+
+  // A gentle notice if the customer came back from a cancelled Stripe session.
+  const cancelled = returnStatus === "cancelled";
+
+  // On return from Stripe's hosted checkout, confirm the session server-side so
+  // the customer's receipt email is sent (and the transaction is finalised).
+  // Idempotent on the backend, so a refresh won't send a duplicate.
+  useEffect(() => {
+    if (returnStatus === "success" && sessionId) {
+      fetch("/api/checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      }).catch(() => {});
+    }
+  }, [returnStatus, sessionId]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const submitPurchase = async (e) => {
+  const startCheckout = async (e) => {
     e.preventDefault();
     setStatus("loading");
     setError("");
 
     try {
-      const response = await fetch("/api/transactions", {
+      const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           plan: data.plan,
-          customer: {
-            fullName: data.fullName,
-            email: data.email,
-            company: data.company,
-          },
-          payment: {
-            cardNumber: data.cardNumber,
-            expiry: data.expiry,
-            cvc: data.cvc,
-          },
+          fullName: data.fullName,
+          email: data.email,
+          company: data.company,
         }),
       });
 
@@ -616,30 +800,41 @@ function TransactionPage() {
         try {
           payload = JSON.parse(raw);
         } catch {
-          payload = { error: "Received an invalid response from the transaction service." };
+          payload = { error: "Received an invalid response from the checkout service." };
         }
       }
 
       if (!response.ok) {
-        throw new Error(payload.error || "Transaction failed");
+        throw new Error(payload.error || "Checkout could not be started.");
       }
 
-      if (!payload.transactionId) {
-        throw new Error("Transaction service did not return a valid receipt.");
+      // Stripe configured → hand off to the hosted, PCI-safe checkout page.
+      if (payload.mode === "stripe" && payload.url) {
+        setStatus("redirecting");
+        window.location.href = payload.url;
+        return;
       }
 
-      setReceipt(payload);
-      setStatus("success");
+      // Stripe not configured → simulated approval, show the receipt inline.
+      if (payload.mode === "simulated" && payload.transactionId) {
+        setReceipt(payload);
+        setStatus("success");
+        return;
+      }
+
+      throw new Error("Checkout service returned an unexpected response.");
     } catch (err) {
       setStatus("error");
-      const message = err?.message || "Transaction failed";
+      const message = err?.message || "Checkout could not be started.";
       if (message.toLowerCase().includes("fetch")) {
-        setError("Cannot reach transaction API. Start it with: npm run start:api");
+        setError("Cannot reach the checkout API. Start it with: npm run dev:api");
       } else {
         setError(message);
       }
     }
   };
+
+  const showSuccess = status === "success";
 
   return (
     <>
@@ -655,7 +850,7 @@ function TransactionPage() {
           <div className="transaction-intro">
             <div className="section-label">Subscription Checkout</div>
             <h1 className="section-title">Complete Your Subscription</h1>
-            <p className="section-desc">Enter your billing details to activate SecureReport AI for your team.</p>
+            <p className="section-desc">Confirm your details and continue to our secure payment provider to activate SecureReport AI.</p>
 
             <div className="plan-summary">
               <div className="plan-summary-head">
@@ -667,59 +862,70 @@ function TransactionPage() {
             </div>
           </div>
 
-          <form className="transaction-card" onSubmit={submitPurchase}>
-            <h3>Billing details</h3>
-            <div className="form-group">
-              <label htmlFor="planChoice">Plan</label>
-              <select id="planChoice" name="plan" value={data.plan} onChange={onChange}>
-                {plans.map((p) => (
-                  <option key={p.name} value={p.name}>{p.name} - ${p.amount}/mo</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="fullName">Full name</label>
-                <input id="fullName" name="fullName" value={data.fullName} onChange={onChange} required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="email">Business email</label>
-                <input id="email" name="email" type="email" value={data.email} onChange={onChange} required />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="company">Company</label>
-              <input id="company" name="company" value={data.company} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="cardNumber">Card number</label>
-              <input id="cardNumber" name="cardNumber" value={data.cardNumber} onChange={onChange} placeholder="4242 4242 4242 4242" required />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="expiry">Expiry (MM/YY)</label>
-                <input id="expiry" name="expiry" value={data.expiry} onChange={onChange} placeholder="12/27" required />
-              </div>
-              <div className="form-group">
-                <label htmlFor="cvc">CVC</label>
-                <input id="cvc" name="cvc" value={data.cvc} onChange={onChange} placeholder="123" required />
-              </div>
-            </div>
-
-            {status === "error" && <p className="txn-error">{error}</p>}
-            {status === "success" && receipt && (
+          {showSuccess ? (
+            <div className="transaction-card">
               <div className="txn-success">
                 <strong>Subscription Activated</strong>
-                <p>Transaction ID: {receipt.transactionId}</p>
-                <p>Plan: {receipt.plan} - ${receipt.amount}/mo</p>
-                <p>Next billing date: {receipt.nextBillingDate}</p>
+                {receipt ? (
+                  <>
+                    <p>Transaction ID: {receipt.transactionId}</p>
+                    <p>Plan: {receipt.plan} — ${receipt.amount}/mo</p>
+                    <p>Next billing date: {receipt.nextBillingDate}</p>
+                    <p className="txn-note">{receipt.message}</p>
+                  </>
+                ) : (
+                  <>
+                    <p>Thanks — your payment to Stripe was successful.</p>
+                    <p>Plan: {selectedPlan.name} — ${selectedPlan.amount}/mo</p>
+                    {sessionId && <p className="txn-note">Checkout reference: {sessionId}</p>}
+                    <p className="txn-note">A receipt has been recorded and your subscription is now active.</p>
+                  </>
+                )}
               </div>
-            )}
+              <Link to="/" className="btn-primary" style={{ textAlign: "center" }}>Return to homepage</Link>
+            </div>
+          ) : (
+            <form className="transaction-card" onSubmit={startCheckout}>
+              <h3>Your details</h3>
+              {cancelled && (
+                <p className="txn-cancelled">Checkout was cancelled — no payment was taken. You can try again below.</p>
+              )}
+              <div className="form-group">
+                <label htmlFor="planChoice">Plan</label>
+                <select id="planChoice" name="plan" value={data.plan} onChange={onChange}>
+                  {plans.map((p) => (
+                    <option key={p.name} value={p.name}>{p.name} - ${p.amount}/mo</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="fullName">Full name</label>
+                  <input id="fullName" name="fullName" value={data.fullName} onChange={onChange} required />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">Business email</label>
+                  <input id="email" name="email" type="email" value={data.email} onChange={onChange} required />
+                </div>
+              </div>
+              <div className="form-group">
+                <label htmlFor="company">Company</label>
+                <input id="company" name="company" value={data.company} onChange={onChange} required />
+              </div>
 
-            <button className="btn-primary" type="submit" disabled={status === "loading"}>
-              {status === "loading" ? "Processing..." : "Purchase Subscription"}
-            </button>
-          </form>
+              {status === "error" && <p className="txn-error">{error}</p>}
+
+              <button className="btn-primary" type="submit" disabled={status === "loading" || status === "redirecting"}>
+                {status === "loading" || status === "redirecting" ? "Redirecting to secure checkout..." : "Continue to secure checkout"}
+              </button>
+
+              <p className="checkout-note">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0v4" /></svg>
+                You'll be redirected to Stripe to enter payment. Card details are never entered on this site.
+              </p>
+              <p className="checkout-testcard">Test mode: use card <code>4242 4242 4242 4242</code>, any future expiry, any CVC.</p>
+            </form>
+          )}
         </div>
         <div className="footer-disclaimer">This website/app is for a class assignment and not for commercial purposes.</div>
       </section>

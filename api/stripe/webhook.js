@@ -3,6 +3,7 @@
 import { createHandler, sendJson } from "../_lib/http.js";
 import { prisma } from "../_lib/prisma.js";
 import { stripe, stripeEnabled, WEBHOOK_SECRET } from "../_lib/stripe.js";
+import { sendReceiptEmail } from "../_lib/email.js";
 
 // Tell Vercel not to parse the body — we need the raw bytes for verification.
 export const config = { api: { bodyParser: false } };
@@ -55,15 +56,27 @@ export default createHandler("POST", async (req, res) => {
         });
       }
 
-      // Finalise the matching pending transaction.
-      await prisma.transaction.updateMany({
-        where: { stripeCheckoutId: session.id },
+      // Finalise the matching pending transaction. Only the call that actually
+      // performs the flip (count > 0) sends the email — this keeps the receipt
+      // idempotent across the webhook and the /api/checkout-session confirm path.
+      const amount = Math.round((session.amount_total ?? 0) / 100);
+      const finalized = await prisma.transaction.updateMany({
+        where: { stripeCheckoutId: session.id, status: "pending" },
         data: {
           status: "approved",
-          amount: Math.round((session.amount_total ?? 0) / 100),
+          amount,
           stripePaymentIntentId: session.payment_intent ?? null,
         },
       });
+
+      // Email the customer their receipt (if Stripe captured an address).
+      const email = session.customer_details?.email || session.customer_email;
+      if (finalized.count > 0 && email) {
+        sendReceiptEmail(
+          { email, fullName: session.metadata?.fullName || "there" },
+          { id: session.id, plan: plan || session.metadata?.plan, amount }
+        ).catch((err) => console.error("[webhook receipt email]", err));
+      }
       break;
     }
 

@@ -91,7 +91,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:va
 
 .trust-bar{background:var(--surface-alt);padding:40px 0;border-bottom:1px solid var(--border-dark);}
 .trust-inner{display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap;}
-.trust-item{display:flex;align-items:center;gap:12px;}
+.trust-item{display:flex;align-items:center;justify-content:center;gap:12px;width:260px;}
 .trust-item{transition:transform .2s;}
 .trust-item:hover{transform:translateY(-2px);}
 .trust-icon{width:40px;height:40px;background:var(--surface-card);border:1px solid var(--border-dark);border-radius:10px;display:flex;align-items:center;justify-content:center;transition:border-color .2s;}
@@ -133,6 +133,30 @@ body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:va
 .feature-card h3{font-size:1.02rem;font-weight:700;margin-bottom:8px;letter-spacing:-0.01em;}
 .feature-card p{font-size:0.85rem;color:var(--text-on-dark-2);line-height:1.65;}
 .capability-media{display:block;width:100%;height:92px;margin-top:16px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;background:linear-gradient(180deg,rgba(43,214,123,0.05),rgba(43,214,123,0.01));border:1px solid rgba(43,214,123,0.18);border-radius:10px;padding:10px 14px;}
+
+/* ── Security & Compliance ─────────────────────────────────────────────── */
+.compliance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.compliance-card{display:flex;gap:16px;align-items:flex-start;background:var(--surface-card);border:1px solid var(--border-dark);border-radius:14px;padding:24px 22px;transition:border-color .25s,transform .25s;}
+.compliance-card:hover{border-color:rgba(43,214,123,0.4);transform:translateY(-3px);}
+.compliance-icon{flex:0 0 44px;width:44px;height:44px;background:var(--green-subtle);border:1px solid rgba(43,214,123,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.compliance-icon svg{width:22px;height:22px;stroke:var(--green);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.compliance-card h3{font-size:0.98rem;font-weight:700;margin-bottom:6px;letter-spacing:-0.01em;}
+.compliance-card p{font-size:0.83rem;color:var(--text-on-dark-2);line-height:1.6;}
+
+/* ── Testimonials + pilot strip ────────────────────────────────────────── */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.testimonial-card{display:flex;flex-direction:column;gap:16px;background:var(--surface-card);border:1px solid var(--border-dark);border-radius:14px;padding:28px 26px;margin:0;}
+.testimonial-stars{color:var(--green);font-size:0.9rem;letter-spacing:2px;}
+.testimonial-card blockquote{font-size:0.92rem;line-height:1.7;color:var(--text-on-dark);margin:0;flex:1;}
+.testimonial-card figcaption{display:flex;align-items:center;gap:12px;}
+.testimonial-avatar{width:40px;height:40px;border-radius:50%;background:var(--green-subtle);border:1px solid rgba(43,214,123,0.25);color:var(--green);font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;flex:0 0 40px;}
+.testimonial-name{display:block;font-weight:600;font-size:0.88rem;color:var(--text-on-dark);}
+.testimonial-role{display:block;font-size:0.78rem;color:var(--text-on-dark-3);}
+.logo-strip{margin-top:44px;text-align:center;}
+.logo-strip-label{display:block;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-on-dark-3);margin-bottom:18px;}
+.logo-strip-items{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 28px;}
+.logo-chip{font-weight:700;font-size:0.95rem;color:var(--text-on-dark-2);opacity:0.7;letter-spacing:-0.01em;transition:opacity .2s;}
+.logo-chip:hover{opacity:1;}
 
 .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
 .preview-text .section-label{text-align:left;}
@@ -350,8 +374,52 @@ body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:va
   margin-bottom: 4px;
 }
 
+.txn-note { opacity: 0.8; font-size: 0.8rem; margin-top: 4px; }
+
+.txn-cancelled {
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.86rem;
+}
+
+.checkout-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.checkout-note svg {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  stroke: var(--green-hover);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.checkout-testcard {
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+.checkout-testcard code {
+  font-family: 'Share Tech Mono', monospace;
+  background: rgba(0,0,0,0.05);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
 @media(max-width:900px){
-  .process-grid,.features-grid,.pricing-grid{grid-template-columns:1fr;}
+  .process-grid,.features-grid,.pricing-grid,.compliance-grid,.testimonials-grid{grid-template-columns:1fr;}
   .preview-grid,.contact-grid{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr 1fr;gap:32px;}
   .hero-grid{grid-template-columns:1fr;gap:44px;}
