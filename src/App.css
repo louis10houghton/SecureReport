@@ -418,7 +418,25 @@ body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:va
   color: var(--text-secondary);
 }
 
+.screenshots-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+.screenshot-card{margin:0;background:var(--surface-card);border:1px solid var(--border-dark);border-radius:14px;overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,0.35);transition:transform .25s ease,box-shadow .25s ease;}
+.screenshot-card:hover{transform:translateY(-4px);box-shadow:0 26px 56px rgba(0,0,0,0.45);}
+.screenshot-open{display:block;position:relative;width:100%;padding:0;border:none;background:none;cursor:zoom-in;line-height:0;}
+.screenshot-card img{display:block;width:100%;height:auto;border-bottom:1px solid var(--border-dark);}
+.screenshot-zoom{position:absolute;top:12px;right:12px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:rgba(11,18,33,0.72);border:1px solid var(--border-dark);border-radius:8px;opacity:0;transform:scale(0.9);transition:opacity .2s ease,transform .2s ease;}
+.screenshot-zoom svg{width:18px;height:18px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.screenshot-open:hover .screenshot-zoom,.screenshot-open:focus-visible .screenshot-zoom{opacity:1;transform:scale(1);}
+.screenshot-open:focus-visible{outline:2px solid var(--green);outline-offset:3px;}
+.screenshot-card figcaption{padding:16px 20px;font-size:0.85rem;color:var(--text-on-dark-2);}
+
+.lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:32px;background:rgba(5,7,12,0.86);backdrop-filter:blur(4px);cursor:zoom-out;animation:lightbox-fade .18s ease;}
+.lightbox-img{max-width:min(1200px,95vw);max-height:90vh;width:auto;height:auto;border-radius:10px;border:1px solid var(--border-dark);box-shadow:0 30px 80px rgba(0,0,0,0.6);cursor:default;}
+.lightbox-close{position:absolute;top:20px;right:24px;width:44px;height:44px;font-size:2rem;line-height:1;color:var(--white);background:rgba(255,255,255,0.08);border:1px solid var(--border-dark);border-radius:10px;cursor:pointer;transition:background .2s ease;}
+.lightbox-close:hover{background:rgba(255,255,255,0.18);}
+@keyframes lightbox-fade{from{opacity:0;}to{opacity:1;}}
+
 @media(max-width:900px){
+  .screenshots-grid{grid-template-columns:1fr;}
   .process-grid,.features-grid,.pricing-grid,.compliance-grid,.testimonials-grid{grid-template-columns:1fr;}
   .preview-grid,.contact-grid{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr 1fr;gap:32px;}

@@ -346,6 +346,7 @@ function CapabilityGraphic({ type }) {
 function LandingPage() {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const [lightbox, setLightbox] = useState(null);
   const [formData, setFormData] = useState({
     fname: "",
     lname: "",
@@ -387,6 +388,20 @@ function LandingPage() {
       }
     };
   }, []);
+
+  // Close the expanded screenshot on Escape, and lock body scroll while open.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setLightbox(null);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [lightbox]);
 
   const onInput = (e) => {
     const { name, value } = e.target;
@@ -563,6 +578,36 @@ function LandingPage() {
         </div>
       </section>
 
+      <section className="section screenshots-section">
+        <div className="container">
+          <div className="section-header">
+            <div className="section-label">Product Preview</div>
+            <h2 className="section-title">A look inside the platform</h2>
+            <p className="section-desc">From a single dashboard, review every AI-drafted incident report and upload new CCTV footage for analysis.</p>
+          </div>
+          <div className="screenshots-grid">
+            <figure className="screenshot-card">
+              <button type="button" className="screenshot-open" onClick={() => setLightbox({ src: "/screenshot-reports.png", alt: "SecureReport incident reports dashboard listing finalised reports" })} aria-label="Expand the incident reports dashboard screenshot">
+                <img src="/screenshot-reports.png" alt="SecureReport incident reports dashboard listing finalised reports" loading="lazy" />
+                <span className="screenshot-zoom" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3M11 8v6M8 11h6" /></svg>
+                </span>
+              </button>
+              <figcaption>Incident reports — every AI draft, reviewed before it's finalised</figcaption>
+            </figure>
+            <figure className="screenshot-card">
+              <button type="button" className="screenshot-open" onClick={() => setLightbox({ src: "/screenshot-upload.png", alt: "SecureReport upload CCTV footage screen with site and video file fields" })} aria-label="Expand the upload footage screenshot">
+                <img src="/screenshot-upload.png" alt="SecureReport upload CCTV footage screen with site and video file fields" loading="lazy" />
+                <span className="screenshot-zoom" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3M11 8v6M8 11h6" /></svg>
+                </span>
+              </button>
+              <figcaption>Upload footage — the AI drafts a report you review and edit next</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
       <section className="section" id="features">
         <div className="container">
           <div className="section-header">
@@ -734,6 +779,13 @@ function LandingPage() {
           <div className="footer-disclaimer">This website/app is for a class assignment and not for commercial purposes.</div>
         </div>
       </footer>
+
+      {lightbox && (
+        <div className="lightbox" role="dialog" aria-modal="true" aria-label="Expanded screenshot" onClick={() => setLightbox(null)}>
+          <button type="button" className="lightbox-close" aria-label="Close" onClick={() => setLightbox(null)}>&times;</button>
+          <img className="lightbox-img" src={lightbox.src} alt={lightbox.alt} onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
     </>
   );
 }
