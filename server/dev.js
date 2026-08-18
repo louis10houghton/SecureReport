@@ -14,7 +14,7 @@ import createTransaction from "../api/transactions/index.js";
 import getTransaction from "../api/transactions/[id].js";
 import checkout from "../api/checkout.js";
 import checkoutSession from "../api/checkout-session.js";
-import stripeWebhook from "../api/stripe/webhook.js";
+import { POST as stripeWebhook } from "../api/stripe/webhook.js";
 
 const app = express();
 const PORT = process.env.PORT || 8787;
@@ -28,6 +28,24 @@ const mount = (handler) => (req, res) => {
   return handler(req, res);
 };
 
+// Adapt a web-standard (Request -> Response) handler to Express. Used for the
+// Stripe webhook, which uses `request.text()` to read the raw body for signature
+// verification — matching how it runs as a Vercel function in production.
+const mountWeb = (handler) => async (req, res) => {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  const body = Buffer.concat(chunks);
+  const request = new Request(`http://${req.headers.host || "localhost"}${req.url}`, {
+    method: req.method,
+    headers: req.headers,
+    body: body.length ? body : undefined,
+  });
+  const response = await handler(request);
+  res.statusCode = response.status;
+  response.headers.forEach((value, key) => res.setHeader(key, value));
+  res.end(Buffer.from(await response.arrayBuffer()));
+};
+
 app.get("/api/health", mount(health));
 app.post("/api/auth/signup", mount(signup));
 app.post("/api/auth/login", mount(login));
@@ -37,7 +55,7 @@ app.post("/api/transactions", mount(createTransaction));
 app.get("/api/transactions/:id", mount(getTransaction));
 app.post("/api/checkout", mount(checkout));
 app.post("/api/checkout-session", mount(checkoutSession));
-app.post("/api/stripe/webhook", mount(stripeWebhook));
+app.post("/api/stripe/webhook", mountWeb(stripeWebhook));
 
 app.listen(PORT, () => {
   console.log(`SecureReport dev API running on http://localhost:${PORT}`);

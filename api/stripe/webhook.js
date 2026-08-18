@@ -1,34 +1,33 @@
 // POST /api/stripe/webhook — Stripe calls this to confirm payments/subscriptions.
-// Signature verification needs the RAW request body, so body parsing is disabled.
-import { createHandler, sendJson } from "../_lib/http.js";
+//
+// Signature verification requires the RAW, unparsed request body. On Vercel the
+// reliable way to get it is the web-standard handler signature (`export function
+// POST(request)`), where `await request.text()` returns the exact bytes Stripe
+// signed. This avoids the platform's automatic body parsing, which silently
+// breaks `constructEvent` in production. The local dev harness bridges Express to
+// this same handler (see server/dev.js).
+//
+// Ref: https://vercel.com/kb/guide/how-do-i-get-the-raw-body-of-a-serverless-function
 import { prisma } from "../_lib/prisma.js";
 import { stripe, stripeEnabled, WEBHOOK_SECRET } from "../_lib/stripe.js";
 import { sendReceiptEmail } from "../_lib/email.js";
 
-// Tell Vercel not to parse the body — we need the raw bytes for verification.
-export const config = { api: { bodyParser: false } };
-
-async function readRawBody(req) {
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks);
-}
-
-export default createHandler("POST", async (req, res) => {
+export async function POST(request) {
   if (!stripeEnabled || !WEBHOOK_SECRET) {
-    return sendJson(res, 503, { error: "Stripe webhook is not configured." });
+    return Response.json({ error: "Stripe webhook is not configured." }, { status: 503 });
   }
 
-  const signature = req.headers["stripe-signature"];
-  const raw = await readRawBody(req);
+  const signature = request.headers.get("stripe-signature");
+  const rawBody = await request.text();
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(raw, signature, WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(rawBody, signature, WEBHOOK_SECRET);
   } catch (err) {
-    return sendJson(res, 400, { error: `Webhook signature verification failed: ${err.message}` });
+    return Response.json(
+      { error: `Webhook signature verification failed: ${err.message}` },
+      { status: 400 }
+    );
   }
 
   switch (event.type) {
@@ -94,5 +93,5 @@ export default createHandler("POST", async (req, res) => {
       break;
   }
 
-  return sendJson(res, 200, { received: true });
-});
+  return Response.json({ received: true });
+}
